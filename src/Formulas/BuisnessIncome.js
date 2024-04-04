@@ -1,32 +1,41 @@
 import readlineSync from "readline-sync"
 
+function calculateMonthlyIncome(amount, frequency) {
+    return frequency === "monthly" ? amount * 12 : amount;
+}
+
+function calculateForeignIncome(income, currency) {
+    if (currency.toLowerCase() !== 'lkr') {
+        let exRate = readlineSync.question("exchange rate : ");
+        return income * exRate
+    } else {
+        return 0
+    }
+}
+
 function getBuisnessIncome() {
-    console.log("Enter your Buisness income details:");
-    let primaryIncome = parseFloat(readlineSync.question("Buisness income (in LKR or foreign currency): "));
-    let primaryIncomeDesc = readlineSync.question("Description of Buisness income: ");
-    let primaryIncomeCurrency = readlineSync.question("Currency (LKR or foreign): ");
-    let primaryExchangeRate = 1;
-    if (primaryIncomeCurrency.toLowerCase() !== 'lkr') {
-        primaryExchangeRate = parseFloat(readlineSync.question("Exchange rate to LKR: "));
+
+    let totalIncome = 0;
+    let foreignIncome = 0;
+    let primaryIncomeDesc=''
+    console.log("*************Enter your Buisness income details*************");
+    let hasIncome = readlineSync.question(`Do you have Buisness income ? (yes/no): `).toLowerCase() === 'yes';
+    if (hasIncome) {
+        let primaryIncome = parseFloat(readlineSync.question("Buisness income amount: "));
+        let primaryAnum = readlineSync.question("Is Your Income yearly or monthly : ");
+        primaryIncomeDesc = readlineSync.question("Description of Buisness income: ");
+        let primaryIncomeCurrency = readlineSync.question("Currency (LKR or foreign): ");
+
+        primaryIncome = calculateMonthlyIncome(primaryIncome, primaryAnum);
+        totalIncome += primaryIncome;
+        foreignIncome += calculateForeignIncome(primaryIncome, primaryIncomeCurrency);
+        if (foreignIncome > 0) totalIncome = foreignIncome;
     }
-    let secondaryIncomes=[]
-    while(true){
-        let moreIncome = readlineSync.question("Do you have more income? (yes/no): ");
-        if (moreIncome.toLowerCase() !== 'yes') {
-            break;
-        }
-        let income = parseFloat(readlineSync.question("New income (in LKR or foreign currency): "));
-        let description = readlineSync.question("Description of more income: ");
-        let currency = readlineSync.question("Currency (LKR or foreign): ");
-        let exchangeRate = 1;
-        if (currency.toLowerCase() !== 'lkr') {
-            exchangeRate = parseFloat(readlineSync.question("Exchange rate to LKR: "));
-        }
-        secondaryIncomes.push({ income, description, currency, exchangeRate });
-    }
+
     return {
-        primaryIncome: { income: primaryIncome, description: primaryIncomeDesc, currency: primaryIncomeCurrency, exchangeRate: primaryExchangeRate },
-        secondaryIncomes
+        primaryIncomeDesc,
+        totalIncome,
+        foreignIncome
     };
 }
 export default getBuisnessIncome
