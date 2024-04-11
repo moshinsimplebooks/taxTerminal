@@ -16,7 +16,9 @@
   "author": "shabeer@simpebooks",
   "license": "ISC",
   "dependencies": {
+    "fs": "^0.0.1-security",
     "nodemon": "^3.1.0",
+    "pdf2pic": "^3.1.1",
     "readline-sync": "^1.4.10"
   }
 }
